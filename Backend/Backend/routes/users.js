@@ -1,0 +1,53 @@
+var express = require('express');
+var router = express.Router();
+
+const User = require('../models/Users');
+
+router.get('/get-users', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+})
+
+router.post('/register', async (req, res) => {
+    const { name, email, password, phoneNumber } = req.body;
+    try {
+        const user = new User({
+            name,
+            email,
+            password,
+            phoneNumber
+        });
+        await user.save();
+        res.status(200).send('User added');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+})
+
+router.post('/login', async (req, res) => {
+    const { emailOrPhone, password } = req.body;
+    try {
+        const user = await User.findOne({ $or: [{ email: emailOrPhone }, { phoneNumber: emailOrPhone }] });
+
+        if (!user) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        if (user.password !== password) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        res.status(200).send('User logged in');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+})
+
+module.exports = router;
