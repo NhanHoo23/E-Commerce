@@ -16,6 +16,11 @@ router.get('/get-users', async (req, res) => {
 router.post('/register', async (req, res) => {
     const { name, email, password, phoneNumber } = req.body;
     try {
+        const existUser = await User.findOne({ $or: [{ email: email }, { phoneNumber: phoneNumber }] });
+        if(existUser) {
+            console.log('Đã có');
+            return res.status(404).send('Đã có');
+        } 
         const user = new User({
             name,
             email,
@@ -23,6 +28,7 @@ router.post('/register', async (req, res) => {
             phoneNumber
         });
         await user.save();
+
         res.status(200).send('User added');
     } catch (err) {
         console.error(err.message);

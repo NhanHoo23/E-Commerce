@@ -1,8 +1,9 @@
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { COLORS } from '../AppContants'
 import TextField from '../components/TextField'
 import LinearGradient from 'react-native-linear-gradient'
+import LinearButton from '../components/LinearButton'
 
 const LoginScreen = ({navigation}) => {
     const [emailOrPhone, setemailOrPhone] = useState('')
@@ -14,7 +15,9 @@ const LoginScreen = ({navigation}) => {
     const emailInputRef = useRef(null); 
     const passwordInputRef = useRef(null);
 
-    const handleSubmit = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async () => {
         seterrorLabel('');
 
         if (emailInputRef.current) {
@@ -29,7 +32,40 @@ const LoginScreen = ({navigation}) => {
             seterrorLabel('Invalid email or password. Try again!');
             return;
         }
+
         //submit
+        try {
+            setLoading(true)
+            const res = await fetch('http://10.24.43.58:3000/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    password,
+                    emailOrPhone
+                })
+            })
+            if (res.ok) {
+                handleMainRedirect()
+            } else {
+                if(res.status == 404) {
+                    seterrorLabel('Invalid email or password. Try again!');
+                }
+                console.log('Register failed')
+                setLoading(false)
+            }
+        } catch (error) {
+            console.log('Register failed ', error);
+            setLoading(false)
+        }
+        
+    };
+
+    const handleMainRedirect = () => {
+        //go to main
+        console.log('Successfully');
+        setLoading(false)
     };
 
     return (
@@ -56,15 +92,7 @@ const LoginScreen = ({navigation}) => {
                 </Pressable>
             </View>
 
-            <TouchableOpacity style={{ paddingHorizontal: 16, width: '100%' }} onPress={handleSubmit}>
-                <LinearGradient
-                    colors={['#007537', '#4CAF50']}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                    style={styles.btnSubmit}>
-                    <Text style={styles.btnSubmitText}>Đăng nhập</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} style={null} onPress={handleSubmit}/>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
                 <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
@@ -89,6 +117,12 @@ const LoginScreen = ({navigation}) => {
                     <Text style={{ fontWeight: '400', fontSize: 12, color: '#009245' }}>Tạo tài khoản</Text>
                 </Pressable>
             </View>
+
+            {loading && 
+            <View style={styles.gradient}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>}
+
         </View>
     )
 }
@@ -96,6 +130,14 @@ const LoginScreen = ({navigation}) => {
 export default LoginScreen
 
 const styles = StyleSheet.create({
+    gradient: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     container: {
         flex: 1,
         alignItems: 'center',
@@ -123,18 +165,5 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginHorizontal: 16
     },
-    btnSubmit: {
-        width: '100%',
-        height: 50,
-        borderRadius: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 16,
-        backgroundColor: 'red'
-    },
-    btnSubmitText: {
-        color: 'white',
-        fontWeight: '700',
-        fontSize: 20
-    }
+    
 })

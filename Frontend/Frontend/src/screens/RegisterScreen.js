@@ -1,8 +1,10 @@
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, Image, Linking, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { COLORS } from '../AppContants'
 import TextField from '../components/TextField'
 import LinearGradient from 'react-native-linear-gradient'
+import LinearButton from '../components/LinearButton'
+import LottieView from 'lottie-react-native'
 
 const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState('')
@@ -17,7 +19,9 @@ const RegisterScreen = ({ navigation }) => {
     const phoneNumberInputRef = useRef(null);
     const passwordInputRef = useRef(null);
 
-    const handleSubmit = () => {
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleSubmit = async () => {
         seterrorLabel('');
 
         if (emailInputRef.current) {
@@ -40,6 +44,36 @@ const RegisterScreen = ({ navigation }) => {
         }
 
         // submit
+        try {
+            const res = await fetch('http://10.24.43.58:3000/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    phoneNumber,
+                    password
+                })
+            })
+            if (res.ok) {
+                console.log('Successfully');
+                setModalVisible(true)
+            } else {
+                if(res.status == 404) {
+                    seterrorLabel('Invalid email or password. Try again!');
+                }
+                console.log('Register failed')
+            }
+        } catch (error) {
+            console.log('Register failed ', error);
+        }
+    };
+
+    const handleLoginRedirect = () => {
+        navigation.goBack();
+        setModalVisible(false); 
     };
 
     return (
@@ -66,15 +100,7 @@ const RegisterScreen = ({ navigation }) => {
                 </Text>
             </Text>
 
-            <TouchableOpacity style={{ paddingHorizontal: 16, width: '100%' }} onPress={handleSubmit}>
-                <LinearGradient
-                    colors={['#007537', '#4CAF50']}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                    style={styles.btnSubmit}>
-                    <Text style={styles.btnSubmitText}>Đăng ký</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng ký'} onPress={handleSubmit} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
                 <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
@@ -99,6 +125,24 @@ const RegisterScreen = ({ navigation }) => {
                     <Text style={{ fontWeight: '400', fontSize: 12, color: '#009245' }}>Đăng nhập</Text>
                 </Pressable>
             </View>
+
+            <Modal visible={isModalVisible} animationType='fade' transparent={true}>
+                <View style={styles.modalContainer}>
+                    <Pressable style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }} onPress={() => { setModalVisible(false) }}></Pressable>
+                    <View style={styles.modalView}>
+                        <Text style={{ fontSize: 20, marginBottom: 20 }}>Đăng ký thành công!</Text>
+                        <LottieView
+                            source={require('../assets/success.json')}
+                            autoPlay
+                            loop={false}
+                            style={{ width: 100, height: 100 }}
+                            speed={1.5}
+                            resizeMode='contain'
+                        />
+                        <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} onPress={handleLoginRedirect} style={{width: 200}} />
+                    </View>
+                </View>
+            </Modal>
         </View>
     )
 }
@@ -143,18 +187,17 @@ const styles = StyleSheet.create({
         color: '#009245',
         textDecorationLine: 'underline'
     },
-    btnSubmit: {
-        width: '100%',
-        height: 50,
+    modalContainer: {
+        flex: 1,
+        backgroundColor: '#00000050',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalView: {
         borderRadius: 15,
+        padding: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 16,
-        backgroundColor: 'red'
-    },
-    btnSubmitText: {
-        color: 'white',
-        fontWeight: '700',
-        fontSize: 20
+        backgroundColor: 'white'
     }
 })

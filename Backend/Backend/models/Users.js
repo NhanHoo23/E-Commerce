@@ -8,18 +8,19 @@ const UserSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
     },
     password: {
         type: String,
         required: true
     },
     phoneNumber: {
-        type: Number,
-        required: true
+        type: String,
+        required: true,
     },
     address: {
         type: String,
+        default: ''
     },
 });
 
