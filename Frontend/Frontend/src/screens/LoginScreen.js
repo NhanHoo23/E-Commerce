@@ -1,21 +1,26 @@
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { COLORS } from '../AppContants'
 import TextField from '../components/TextField'
 import LinearGradient from 'react-native-linear-gradient'
 import LinearButton from '../components/LinearButton'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
     const [emailOrPhone, setemailOrPhone] = useState('')
     const [password, setPassword] = useState('')
     const [rememberAcc, setrememberAcc] = useState(false)
 
     const [errorLabel, seterrorLabel] = useState('')
 
-    const emailInputRef = useRef(null); 
+    const emailInputRef = useRef(null);
     const passwordInputRef = useRef(null);
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        loadData()
+    }, [])
 
     const handleSubmit = async () => {
         seterrorLabel('');
@@ -36,7 +41,7 @@ const LoginScreen = ({navigation}) => {
         //submit
         try {
             setLoading(true)
-            const res = await fetch('http://10.24.43.58:3000/users/login', {
+            const res = await fetch('http://192.168.0.3:3000/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -47,9 +52,18 @@ const LoginScreen = ({navigation}) => {
                 })
             })
             if (res.ok) {
+                if (rememberAcc) {
+                    await AsyncStorage.setItem('email', emailOrPhone);
+                    await AsyncStorage.setItem('password', password);
+                    await AsyncStorage.setItem('rememberAcc', 'true');
+                } else {
+                    await AsyncStorage.removeItem('email');
+                    await AsyncStorage.removeItem('password');
+                    await AsyncStorage.setItem('rememberAcc', 'false');
+                }
                 handleMainRedirect()
             } else {
-                if(res.status == 404) {
+                if (res.status == 404) {
                     seterrorLabel('Invalid email or password. Try again!');
                 }
                 console.log('Register failed')
@@ -59,12 +73,28 @@ const LoginScreen = ({navigation}) => {
             console.log('Register failed ', error);
             setLoading(false)
         }
-        
+    };
+
+    const loadData = async () => {
+        try {
+            const savedEmail = await AsyncStorage.getItem('email');
+            const savedPassword = await AsyncStorage.getItem('password');
+            const savedRememberAcc = await AsyncStorage.getItem('rememberAcc');
+
+            if (savedRememberAcc === 'true') {
+                setemailOrPhone(savedEmail || '');
+                setPassword(savedPassword || '');
+                setrememberAcc(true);
+            }
+        } catch (error) {
+            console.log('Lỗi khi tải dữ liệu:', error);
+        }
     };
 
     const handleMainRedirect = () => {
         //go to main
         console.log('Successfully');
+        navigation.navigate('Main')
         setLoading(false)
     };
 
@@ -75,13 +105,13 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.title1}>Chào mừng bạn</Text>
             <Text style={styles.title2}>Đăng nhập tài khoản</Text>
 
-            <TextField placeholder={'Nhập email hoặc số điện thoại'} style={styles.textField} onChangeText={setemailOrPhone} inputRef={emailInputRef}/>
-            <TextField placeholder={'Mật khẩu'} isPassword={true} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPassword} inputRef={passwordInputRef}/>
-            {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600',width: '100%', paddingHorizontal: 25, marginTop: 5  }}>{errorLabel}</Text>}
+            <TextField value={emailOrPhone} placeholder={'Nhập email hoặc số điện thoại'} style={styles.textField} onChangeText={setemailOrPhone} inputRef={emailInputRef} />
+            <TextField value={password} placeholder={'Mật khẩu'} isPassword={true} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPassword} inputRef={passwordInputRef} />
+            {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600', width: '100%', paddingHorizontal: 25, marginTop: 5 }}>{errorLabel}</Text>}
 
             <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginTop: 16 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Pressable style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                    <Pressable style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }} onTouchEnd={() => {setrememberAcc(!rememberAcc)}}>
                         <Image source={rememberAcc ? require('../assets/ic_checked.png') : require('../assets/ic_check.png')} style={{ width: 20, height: 20 }} resizeMode='contain' />
                     </Pressable>
                     <Text style={{ fontWeight: '500', fontSize: 11, color: '#949090' }}>Nhớ tài khoản</Text>
@@ -92,7 +122,7 @@ const LoginScreen = ({navigation}) => {
                 </Pressable>
             </View>
 
-            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} style={null} onPress={handleSubmit}/>
+            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} style={null} onPress={handleSubmit} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
                 <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
@@ -113,15 +143,15 @@ const LoginScreen = ({navigation}) => {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 32 }}>
                 <Text style={{ fontWeight: '400', fontSize: 12, color: COLORS.textColor }}>Bạn không có tài khoản? </Text>
 
-                <Pressable onTouchEnd={() => {navigation.navigate('Register')}}>
+                <Pressable onTouchEnd={() => { navigation.navigate('Register') }}>
                     <Text style={{ fontWeight: '400', fontSize: 12, color: '#009245' }}>Tạo tài khoản</Text>
                 </Pressable>
             </View>
 
-            {loading && 
-            <View style={styles.gradient}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>}
+            {loading &&
+                <View style={styles.gradient}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>}
 
         </View>
     )
@@ -165,5 +195,5 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginHorizontal: 16
     },
-    
+
 })

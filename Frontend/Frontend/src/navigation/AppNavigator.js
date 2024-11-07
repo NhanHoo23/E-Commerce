@@ -6,6 +6,7 @@ import SplashScreen from '../screens/SplashScreen'
 import { NavigationContainer } from '@react-navigation/native'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
+import MainScreen from '../screens/MainScreen'
 
 const Stack = createStackNavigator()
 
@@ -16,6 +17,7 @@ const AppNavigator = () => {
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
 
         </Stack.Navigator>
 

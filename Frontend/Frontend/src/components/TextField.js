@@ -4,7 +4,7 @@ import { COLORS } from '../AppContants';
 
 
 
-const TextField = ({ placeholder, isPassword = false, style, onChangeText, inputRef }) => {
+const TextField = ({ placeholder, isPassword = false, style, onChangeText, inputRef, value }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -25,9 +25,10 @@ const TextField = ({ placeholder, isPassword = false, style, onChangeText, input
     }
 
     return (
-        <View style={[styles.container, style, {borderColor: isFocused? '#007537': '#8B8B8B', borderWidth: isFocused ? 2 : 1}]}>
+        <View style={[styles.container, style, { borderColor: isFocused ? '#007537' : '#8B8B8B', borderWidth: isFocused ? 2 : 1 }]}>
             <TextInput
-            ref={inputRef}
+                value={value}
+                ref={inputRef}
                 style={styles.input}
                 placeholder={placeholder}
                 placeholderTextColor={COLORS.secondTextColor}

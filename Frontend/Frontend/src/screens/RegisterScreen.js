@@ -45,7 +45,7 @@ const RegisterScreen = ({ navigation }) => {
 
         // submit
         try {
-            const res = await fetch('http://10.24.43.58:3000/users/register', {
+            const res = await fetch('http://192.168.0.3:3000/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
