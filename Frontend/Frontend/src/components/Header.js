@@ -22,7 +22,10 @@ export default Header
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        // justifyContent: 'space-between',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        height: 55,
+        paddingHorizontal: 24,
+
     }
 })

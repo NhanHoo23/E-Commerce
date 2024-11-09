@@ -5,7 +5,7 @@ import { Pressable } from 'react-native-gesture-handler'
 import DataManager from '../utils/DataManager'
 import ProductItem from '../components/ProductItem'
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
     const categories = DataManager.shared.getCategories();
     const products = DataManager.shared.getProducts();
 
@@ -25,12 +25,13 @@ const HomeScreen = () => {
                     numColumns={2}
                     columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
                     keyExtractor={(item) => item._id}
-                    nestedScrollEnabled={true}
                     renderItem={({ item }) => (
                         <ProductItem item={item} />
                     )}
                 />
-                <Text style={{ fontSize: 16, color: COLORS.textColor, textDecorationLine: 'underline', textAlign: 'right' }}>
+                <Text 
+                style={{ fontSize: 16, color: COLORS.textColor, textDecorationLine: 'underline', textAlign: 'right' }} 
+                onPress={() => {navigation.navigate('ProductByCate', {category: category})}}>
                     Xem thêm {category.name}
                 </Text>
             </View>

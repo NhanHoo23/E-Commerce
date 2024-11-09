@@ -1,6 +1,6 @@
 export const COLORS = {
-    backgroundColor: 'ffffff',
-    textColor: '000000',
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
     
 }
 

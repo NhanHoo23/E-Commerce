@@ -1,31 +1,41 @@
 class DataManager {
-    constructor() {
-      if (!DataManager.instance) {
-         this.categories = []
-        this.currentUser = null
-        DataManager.instance = this;
-      }
-      return DataManager.instance;
+  constructor() {
+    if (!DataManager.instance) {
+      this.categories = []
+      this.products = []
+      this.planTypes = []
+      this.currentUser = null
+      DataManager.instance = this;
     }
-  
-    static shared = new DataManager();
-  
-    setCategories(categories) {
-      this.categories = categories;
-    }
-
-    getCategories() {
-      return this.categories;
-    }
-  
-    setProducts(products) {
-      this.products = products;
-    }
-
-    getProducts() {
-      return this.products;
-    }
+    return DataManager.instance;
   }
-  
-  
-  export default DataManager;
+
+  static shared = new DataManager();
+
+  setCategories(categories) {
+    this.categories = categories;
+  }
+
+  getCategories() {
+    return this.categories;
+  }
+
+  setProducts(products) {
+    this.products = products;
+  }
+
+  getProducts() {
+    return this.products;
+  }
+
+  setPlantTypes(plantTypes) {
+    this.plantTypes = plantTypes;
+  }
+
+  getPlantTypes() {
+    return this.plantTypes;
+  }
+}
+
+
+export default DataManager;

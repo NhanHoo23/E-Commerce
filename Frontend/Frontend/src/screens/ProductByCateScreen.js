@@ -1,14 +1,64 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { COLORS } from '../AppContants'
 import Header from '../components/Header'
+import DataManager from '../utils/DataManager'
+import ProductItem from '../components/ProductItem'
+import { useNavigation } from '@react-navigation/native'
 
-const ProductByCateScreen = ({category}) => {
-  return (
-    <View style={styles.container}>
-        <Header title={category.name} />
-    </View>
-  )
+const ProductByCateScreen = ({ route }) => {
+    const navigation = useNavigation();
+
+    const { category } = route.params;
+    const allProducts = DataManager.shared.getProducts().filter(product => product.category._id === category._id);
+    const plantTypes = DataManager.shared.getPlantTypes();
+
+    const [displayPlantTypes, setDisplayPlantTypes] = useState([{ name: 'All' }, ...plantTypes]);
+    const [selectedPlantType, setSelectedPlantType] = useState('All');
+    const [selectedProducts, setselectedProducts] = useState(allProducts);
+
+    const handleSelectedPlantType = (name) => {
+        setSelectedPlantType(name);
+
+        if (name === 'All') {
+            setselectedProducts(allProducts);
+        } else {
+            let selectedProducts = allProducts.filter(product => product.plantType.name === name);
+            setselectedProducts(selectedProducts);
+        }
+    }
+
+    const renderHeader = () => (
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ marginBottom: 16 }}>
+            {displayPlantTypes.map(plantType => (
+                <TouchableOpacity key={plantType.name} onPress={() => handleSelectedPlantType(plantType.name)} style={selectedPlantType == plantType.name ? styles.menuItemSelected : styles.menuItem}>
+                    <Text style={[styles.menuText, selectedPlantType === plantType.name ? styles.selectedMenuText : null]}>
+                        {plantType.name}
+                    </Text>
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
+    );
+
+    return (
+        <View style={styles.container}>
+            <Header title={category.name} onBackPress={() => { navigation.goBack() }} />
+
+            <View style={{ padding: 20, paddingTop: 0 }}>
+
+                <FlatList
+                    data={selectedProducts}
+                    numColumns={2}
+                    columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
+                    ListHeaderComponent={category.name === 'Cây trồng' ? renderHeader() : null}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <ProductItem item={item} />
+                    )}
+                />
+            </View>
+        </View>
+    )
 }
 
 export default ProductByCateScreen
@@ -17,5 +67,30 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.backgroundColor,
-    }
+    },
+    menuItem: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+    },
+    menuItemSelected: {
+        alignItems: 'center',
+        backgroundColor: '#009245',
+        borderRadius: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+    },
+    menuText: {
+        fontSize: 14,
+        fontWeight: '400',
+        color: '#7D7B7B',
+
+    },
+    selectedMenuText: {
+        fontSize: 14,
+        fontWeight: '400',
+        color: 'white',
+    },
 })

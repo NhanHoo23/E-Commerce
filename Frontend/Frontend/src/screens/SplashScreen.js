@@ -33,6 +33,7 @@ const SplashScreen = ({ navigation }) => {
             try {
                 await loadCategories()
                 await loadProducts()
+                await loadPlantTypes()
                 
                 navigation.replace('Login');
             } catch (error) {
@@ -58,7 +59,6 @@ const SplashScreen = ({ navigation }) => {
             const res = await fetch(`${API_URL}/categories/get-categories`);
             const categories = await res.json();
             DataManager.shared.setCategories(categories);
-            console.log('Categories:', DataManager.shared.getCategories());
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
@@ -69,9 +69,18 @@ const SplashScreen = ({ navigation }) => {
             const res = await fetch(`${API_URL}/products/get-products`);
             const products = await res.json();
             DataManager.shared.setProducts(products);
-            console.log('Categories:', DataManager.shared.getProducts());
         } catch (error) {
             console.error('Error fetching products:', error);
+        }
+    }
+
+    const loadPlantTypes = async () => {
+        try {
+            const res = await fetch(`${API_URL}/plantTypes/get-plant-types`);
+            const plantTypes = await res.json();
+            DataManager.shared.setPlantTypes(plantTypes);
+        } catch (error) {
+            console.error('Error fetching plant types:', error);
         }
     }
 
