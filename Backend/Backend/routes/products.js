@@ -5,7 +5,9 @@ const Product = require('../models/Products');
 
 router.get('/get-products', async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find()
+            .populate('category')
+            .populate('plantType')
         res.status(200).json(products);
     } catch (err) {
         console.error(err.message);

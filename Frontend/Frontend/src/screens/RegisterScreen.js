@@ -1,6 +1,6 @@
 import { Button, Image, Linking, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
-import { COLORS } from '../AppContants'
+import { API_URL, COLORS } from '../AppContants'
 import TextField from '../components/TextField'
 import LinearGradient from 'react-native-linear-gradient'
 import LinearButton from '../components/LinearButton'
@@ -45,7 +45,7 @@ const RegisterScreen = ({ navigation }) => {
 
         // submit
         try {
-            const res = await fetch('http://192.168.0.3:3000/users/register', {
+            const res = await fetch(`${API_URL}/users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

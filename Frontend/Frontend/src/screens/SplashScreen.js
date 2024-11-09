@@ -1,9 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { fetchUsers } from '../api/userApi';
-import { fetchCategories } from '../api/productApi';
 import DataManager from '../utils/DataManager';
-import { COLORS } from '../AppContants';
+import { API_URL, COLORS } from '../AppContants';
 
 
 const SplashScreen = ({ navigation }) => {
@@ -33,17 +31,9 @@ const SplashScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchApiData = async () => {
             try {
-                // const users = await fetchUsers();
-                // DataManager.shared.setUsers(users);
-                // console.log('Users:', users);
-
-                // const categories = await fetchCategories()
-                // DataManager.shared.setCategories(categories)
-
+                await loadCategories()
+                await loadProducts()
                 
-
-                
-
                 navigation.replace('Login');
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -62,6 +52,28 @@ const SplashScreen = ({ navigation }) => {
             clearTimeout(timeoutId);
         };
     }, [navigation]);
+
+    const loadCategories = async () => {
+        try {
+            const res = await fetch(`${API_URL}/categories/get-categories`);
+            const categories = await res.json();
+            DataManager.shared.setCategories(categories);
+            console.log('Categories:', DataManager.shared.getCategories());
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    }
+
+    const loadProducts = async () => {
+        try {
+            const res = await fetch(`${API_URL}/products/get-products`);
+            const products = await res.json();
+            DataManager.shared.setProducts(products);
+            console.log('Categories:', DataManager.shared.getProducts());
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    }
 
     return (
         <View style={styles.container}>
