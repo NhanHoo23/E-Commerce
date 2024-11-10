@@ -9,7 +9,6 @@ const HomeScreen = ({navigation}) => {
     const categories = DataManager.shared.getCategories();
     const products = DataManager.shared.getProducts();
 
-
     const getProductsByCategory = (categoryId) => {
         return products.filter(product => product.category._id === categoryId).slice(0, 4);
     };
@@ -26,7 +25,7 @@ const HomeScreen = ({navigation}) => {
                     columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
-                        <ProductItem item={item} />
+                        <ProductItem item={item} onPress={() => navigation.navigate('ProductDetail', {product: item})}/>
                     )}
                 />
                 <Text 

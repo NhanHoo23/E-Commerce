@@ -1,13 +1,11 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { COLORS } from '../AppContants'
 import Header from '../components/Header'
 import DataManager from '../utils/DataManager'
 import ProductItem from '../components/ProductItem'
-import { useNavigation } from '@react-navigation/native'
 
-const ProductByCateScreen = ({ route }) => {
-    const navigation = useNavigation();
+const ProductByCateScreen = ({ route, navigation }) => {
 
     const { category } = route.params;
     const allProducts = DataManager.shared.getProducts().filter(product => product.category._id === category._id);
@@ -31,11 +29,11 @@ const ProductByCateScreen = ({ route }) => {
     const renderHeader = () => (
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ marginBottom: 16 }}>
             {displayPlantTypes.map(plantType => (
-                <TouchableOpacity key={plantType.name} onPress={() => handleSelectedPlantType(plantType.name)} style={selectedPlantType == plantType.name ? styles.menuItemSelected : styles.menuItem}>
+                <Pressable key={plantType.name} onPress={() => handleSelectedPlantType(plantType.name)} style={selectedPlantType == plantType.name ? styles.menuItemSelected : styles.menuItem}>
                     <Text style={[styles.menuText, selectedPlantType === plantType.name ? styles.selectedMenuText : null]}>
                         {plantType.name}
                     </Text>
-                </TouchableOpacity>
+                </Pressable>
             ))}
         </ScrollView>
     );
@@ -53,7 +51,7 @@ const ProductByCateScreen = ({ route }) => {
                     ListHeaderComponent={category.name === 'Cây trồng' ? renderHeader() : null}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
-                        <ProductItem item={item} />
+                        <ProductItem item={item} onPress={() => navigation.navigate('ProductDetail', {product: item})}/>
                     )}
                 />
             </View>

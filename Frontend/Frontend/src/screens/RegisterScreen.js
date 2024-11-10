@@ -100,7 +100,7 @@ const RegisterScreen = ({ navigation }) => {
                 </Text>
             </Text>
 
-            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng ký'} onPress={handleSubmit} />
+            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng ký'} style={{paddingHorizontal: 16}} onPress={handleSubmit} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
                 <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
