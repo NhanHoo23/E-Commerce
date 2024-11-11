@@ -40,7 +40,7 @@ const ProductByCateScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title={category.name} onBackPress={() => { navigation.goBack() }} />
+            <Header title={category.name} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} />
 
             <View style={{ padding: 20, paddingTop: 0 }}>
 

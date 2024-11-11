@@ -1,17 +1,17 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Header = ({ title, onBackPress, onCartPress }) => {
+const Header = ({ title, iconRight, onBackPress, onCartPress }) => {
     return (
         <View style={styles.container}>
             <Pressable onPress={onBackPress}>
-                <Image source={require('../assets/ic_back.png')} style={{ width: 24, height: 24 }} />
+                <Image source={onBackPress ? require('../assets/ic_back.png') : null} style={{ width: 24, height: 24 }} />
             </Pressable>
 
             <Text style={{ fontWeight: '500', fontSize: 16 }}>{title}</Text>
 
-            <Pressable onPress={onCartPress}>
-                <Image source={require('../assets/ic_cart.png')} style={{ width: 24, height: 24 }} />
+            <Pressable onPress={iconRight === null ? null : onCartPress}>
+                <Image source={iconRight} style={{ width: 24, height: 24 }} />
             </Pressable>
         </View>
     )

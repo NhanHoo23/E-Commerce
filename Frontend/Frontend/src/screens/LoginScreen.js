@@ -5,6 +5,7 @@ import TextField from '../components/TextField'
 import LinearGradient from 'react-native-linear-gradient'
 import LinearButton from '../components/LinearButton'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import DataManager from '../utils/DataManager'
 
 const LoginScreen = ({ navigation }) => {
     const [emailOrPhone, setemailOrPhone] = useState('')
@@ -61,7 +62,8 @@ const LoginScreen = ({ navigation }) => {
                     await AsyncStorage.removeItem('password');
                     await AsyncStorage.setItem('rememberAcc', 'false');
                 }
-                handleMainRedirect()
+                const user = await res.json();
+                handleMainRedirect(user)
             } else {
                 if (res.status == 404) {
                     seterrorLabel('Invalid email or password. Try again!');
@@ -91,10 +93,12 @@ const LoginScreen = ({ navigation }) => {
         }
     };
 
-    const handleMainRedirect = () => {
+    const handleMainRedirect = (user) => {
         //go to main
         console.log('Successfully');
+        DataManager.shared.setCurrentUser(user)        
         navigation.navigate('Main')
+
         setLoading(false)
     };
 

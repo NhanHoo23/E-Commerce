@@ -12,6 +12,14 @@ class DataManager {
 
   static shared = new DataManager();
 
+  setCurrentUser(user) {
+    this.currentUser = user;
+  }
+
+  getCurrentUser() {
+    return this.currentUser;
+  }
+
   setCategories(categories) {
     this.categories = categories;
   }
