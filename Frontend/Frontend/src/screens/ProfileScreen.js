@@ -1,10 +1,25 @@
 import { Alert, Image, Pressable, SectionList, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { COLORS } from '../AppContants'
 import Header from '../components/Header'
 import DataManager from '../utils/DataManager'
+import { useFocusEffect } from '@react-navigation/native'
 
 const ProfileScreen = ({ navigation }) => {
+  const user = DataManager.shared.getCurrentUser()
+  const [avatar, setAvatar] = useState(null)
+
+  useFocusEffect(
+    useCallback(() => {
+      updateAvatar()
+    }, [])
+  )
+
+  const updateAvatar = () => {
+    const user = DataManager.shared.getCurrentUser();
+    setAvatar(user.avatar);
+}
+
   const listData = [
     {
       title: 'Chung',
@@ -25,7 +40,7 @@ const ProfileScreen = ({ navigation }) => {
   const handleItemPress = (item) => {
     switch (item) {
       case 'Chỉnh sửa thông tin':
-        Alert.alert('Bạn chọn Chỉnh sửa thông tin');
+        navigation.navigate('UpdateInfo', { title: 'CHỈNH SỬA THÔNG TIN' });
         break;
       case 'Cẩm nang trồng cây':
         Alert.alert('Bạn chọn Cẩm nang trồng cây');
@@ -63,10 +78,10 @@ const ProfileScreen = ({ navigation }) => {
       <Header title={'PROFILE'} iconRight={null} />
 
       <View style={{ flexDirection: 'row' }}>
-        <Image source={require('../assets/ic_avatar.png')} style={{ width: 40, height: 40, borderRadius: 20 }} />
+        <Image source={avatar? {uri: user.avatar} : require('../assets/ic_avatar.png')} style={{ width: 40, height: 40, borderRadius: 20 }} />
         <View style={{ marginLeft: 20 }}>
-          <Text style={{ color: COLORS.textColor, fontWeight: '500', fontSize: 16 }}>{DataManager.shared.getCurrentUser().name}</Text>
-          <Text style={{ color: '#7F7F7F', fontWeight: '400', fontSize: 14 }}>{DataManager.shared.getCurrentUser().email}</Text>
+          <Text style={{ color: COLORS.textColor, fontWeight: '500', fontSize: 16 }}>{user.name}</Text>
+          <Text style={{ color: '#7F7F7F', fontWeight: '400', fontSize: 14 }}>{user.email}</Text>
         </View>
       </View>
 

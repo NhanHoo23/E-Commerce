@@ -126,7 +126,7 @@ const LoginScreen = ({ navigation }) => {
                 </Pressable>
             </View>
 
-            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} style={{paddingHorizontal: 16}} onPress={handleSubmit} />
+            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} style={{marginHorizontal: 16}} onPress={handleSubmit} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
                 <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
@@ -154,7 +154,7 @@ const LoginScreen = ({ navigation }) => {
 
             {loading &&
                 <View style={styles.gradient}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color="#ffffff" />
                 </View>}
 
         </View>
