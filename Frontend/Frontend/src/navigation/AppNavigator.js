@@ -10,6 +10,7 @@ import MainScreen from '../screens/MainScreen'
 import ProductByCateScreen from '../screens/ProductByCateScreen'
 import ProductDetail from '../screens/ProductDetail'
 import UpdateInfo from '../screens/UpdateInfo'
+import QandAScreen from '../screens/QandAScreen'
 
 const Stack = createStackNavigator()
 
@@ -24,6 +25,7 @@ const AppNavigator = () => {
             <Stack.Screen name="ProductByCate" component={ProductByCateScreen} />
             <Stack.Screen name="ProductDetail" component={ProductDetail} />
             <Stack.Screen name="UpdateInfo" component={UpdateInfo} />
+            <Stack.Screen name="QandA" component={QandAScreen} />
 
         </Stack.Navigator>
 

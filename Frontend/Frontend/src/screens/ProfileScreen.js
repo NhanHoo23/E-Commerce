@@ -49,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
         Alert.alert('Bạn chọn Lịch sử giao dịch');
         break;
       case 'Q & A':
-        Alert.alert('Bạn chọn Q & A');
+        navigation.navigate('QandA', { title: 'Q & A' });
         break;
       case 'Điều khoản và điều kiện':
         Alert.alert('Bạn chọn Điều khoản và điều kiện');
