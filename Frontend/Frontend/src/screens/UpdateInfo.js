@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import { API_URL, COLORS } from '../AppContants';
@@ -88,19 +88,19 @@ const UpdateInfo = ({ route, navigation }) => {
 
     const uploadImageToFirebase = async (uri, oldImageUrl) => {
         if (!uri) return null;
-    
+
         const storage = getStorage();
-        
+
         const filename = uri.substring(uri.lastIndexOf('/') + 1);
         console.log('Filename:', filename);
-        
+
         const storageRef = ref(storage, `images/${user._id}/${filename}`);
-    
+
         if (oldImageUrl) {
             const oldImagePath = oldImageUrl
                 .substring(oldImageUrl.indexOf('/o/') + 3, oldImageUrl.indexOf('?alt=media'));
-    
-            const oldImageRef = ref(storage, decodeURIComponent(oldImagePath)); 
+
+            const oldImageRef = ref(storage, decodeURIComponent(oldImagePath));
             try {
                 await deleteObject(oldImageRef);
                 console.log('Old image deleted successfully!');
@@ -108,13 +108,13 @@ const UpdateInfo = ({ route, navigation }) => {
                 console.error('Error deleting old image:', error);
             }
         }
-    
+
         const task = storageRef.putFile(uri);
-    
+
         try {
             await task;
             console.log('Image uploaded to Firebase successfully!');
-            
+
             const downloadURL = await storageRef.getDownloadURL();
             return downloadURL;
         } catch (error) {
@@ -133,9 +133,9 @@ const UpdateInfo = ({ route, navigation }) => {
 
             setLoading(true)
 
-            let uploadedAvatarUrl = tempAva;  
+            let uploadedAvatarUrl = tempAva;
             if (tempAva !== user.avatar) {
-                uploadedAvatarUrl = await uploadImageToFirebase(tempAva, user.avatar);  
+                uploadedAvatarUrl = await uploadImageToFirebase(tempAva, user.avatar);
                 setTempAva(uploadedAvatarUrl);
             }
 
@@ -179,37 +179,39 @@ const UpdateInfo = ({ route, navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <Header title={title} iconRight={null} onBackPress={() => { navigation.goBack() }} />
+        <KeyboardAvoidingView style={styles.container}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <Header title={title} iconRight={null} onBackPress={() => { navigation.goBack() }} />
 
-            <View style={{ paddingHorizontal: 40, flex: 1 }}>
-                <Pressable onPress={() => requestPhotoLibraryPermission()}>
-                    <Image
-                        source={tempAva ? { uri: tempAva } : require('../assets/ic_avatar.png')}
-                        style={{ width: 100, height: 100, borderRadius: 50, alignSelf: 'center', marginVertical: 32 }}
-                    />
-                </Pressable>
-                <Text style={{ color: COLORS.textColor, fontWeight: '400', fontSize: 14 }}>Thông tin sẽ được lưu cho lần mua kế tiếp. Bấm vào thông tin chi tiết để chỉnh sửa.</Text>
-                <TextInput value={name} placeholder={name} onChangeText={setName} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B', marginTop: 32 }} />
-                <TextInput value={email} placeholder={email} onChangeText={setEmail} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
-                <TextInput value={address} placeholder={address ? address : 'Nhập địa chỉ'} onChangeText={setAddress} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
-                <TextInput value={phoneNumber} placeholder={phoneNumber} onChangeText={setPhoneNumber} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
-                {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600', width: '100%', marginTop: 5 }}>{errorLabel}</Text>}
-            </View>
+                <View style={{ paddingHorizontal: 40, flex: 1 }}>
+                    <Pressable onPress={() => requestPhotoLibraryPermission()}>
+                        <Image
+                            source={tempAva ? { uri: tempAva } : require('../assets/ic_avatar.png')}
+                            style={{ width: 100, height: 100, borderRadius: 50, alignSelf: 'center', marginVertical: 32 }}
+                        />
+                    </Pressable>
+                    <Text style={{ color: COLORS.textColor, fontWeight: '400', fontSize: 14 }}>Thông tin sẽ được lưu cho lần mua kế tiếp. Bấm vào thông tin chi tiết để chỉnh sửa.</Text>
+                    <TextInput value={name} placeholder={name} onChangeText={setName} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B', marginTop: 32 }} />
+                    <TextInput value={email} placeholder={email} onChangeText={setEmail} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
+                    <TextInput value={address} placeholder={address ? address : 'Nhập địa chỉ'} onChangeText={setAddress} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
+                    <TextInput value={phoneNumber} placeholder={phoneNumber} onChangeText={setPhoneNumber} style={{ borderBottomWidth: 1, borderBottomColor: '#7D7B7B' }} />
+                    {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600', width: '100%', marginTop: 5 }}>{errorLabel}</Text>}
+                </View>
 
-            <LinearButton
-                colors={checkToggleButton() ? ['#007537', '#007537'] : ['#ABABAB', '#ABABAB']}
-                title={'LƯU THÔNG TIN'}
-                onPress={updateUserInformation}
-                enable={!checkToggleButton()}
-                style={{ marginBottom: 30, marginHorizontal: 20 }}
-            />
+                <LinearButton
+                    colors={checkToggleButton() ? ['#007537', '#007537'] : ['#ABABAB', '#ABABAB']}
+                    title={'LƯU THÔNG TIN'}
+                    onPress={updateUserInformation}
+                    enable={!checkToggleButton()}
+                    style={{ marginBottom: 30, marginHorizontal: 20 }}
+                />
 
-            {loading &&
-                <View style={styles.gradient}>
-                    <ActivityIndicator size="large" color="#ffffff" />
-                </View>}
-        </View>
+                {loading &&
+                    <View style={styles.gradient}>
+                        <ActivityIndicator size="large" color="#ffffff" />
+                    </View>}
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 

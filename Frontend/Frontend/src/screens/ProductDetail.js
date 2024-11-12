@@ -23,8 +23,8 @@ const ProductDetail = ({ route, navigation }) => {
                         style={{ height: 270 }}
                         showsButtons
                         loop={true}
-                        nextButton={<Image source={require('../assets/bt_next.png')} />}
-                        prevButton={<Image source={require('../assets/bt_prev.png')} />}
+                        nextButton={<Image source={require('../assets/bt_next.png')} style={{width: 24, height: 24}}/>}
+                        prevButton={<Image source={require('../assets/bt_prev.png')} style={{width: 24, height: 24}}/>}
                         activeDotColor='black'
                     >
                         {product.images.map((image, index) => (

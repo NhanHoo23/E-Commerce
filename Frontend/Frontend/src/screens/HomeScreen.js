@@ -44,7 +44,7 @@ const HomeScreen = ({navigation}) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                     <Text style={{ fontSize: 24, fontWeight: '500', width: '60%' }}>Planta - toả sáng không gian nhà bạn</Text>
                     <Pressable style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image source={require('../assets/ic_cart.png')} />
+                        <Image source={require('../assets/ic_cart.png')} style={{width: 24, height: 24}}/>
                     </Pressable>
                 </View>
                 <Pressable style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
