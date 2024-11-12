@@ -1,4 +1,4 @@
-import { Button, Image, Linking, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, Image, KeyboardAvoidingView, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { API_URL, COLORS } from '../AppContants'
 import TextField from '../components/TextField'
@@ -61,7 +61,7 @@ const RegisterScreen = ({ navigation }) => {
                 console.log('Successfully');
                 setModalVisible(true)
             } else {
-                if(res.status == 404) {
+                if (res.status == 404) {
                     seterrorLabel('Invalid email or password. Try again!');
                 }
                 console.log('Register failed')
@@ -73,77 +73,86 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleLoginRedirect = () => {
         navigation.goBack();
-        setModalVisible(false); 
+        setModalVisible(false);
     };
 
     return (
-        <View style={styles.container}>
-            <Image source={require('../assets/img_header.png')} style={styles.imgHeader} resizeMode='cover' />
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.container}>
+                    <Image source={require('../assets/img_header.png')} style={styles.imgHeader} resizeMode='cover' />
 
-            <Text style={styles.title1}>Đăng ký</Text>
-            <Text style={styles.title2}>Tạo tài khoản</Text>
+                    <Text style={styles.title1}>Đăng ký</Text>
+                    <Text style={styles.title2}>Tạo tài khoản</Text>
 
-            <TextField placeholder={'Họ tên'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setName} inputRef={nameInputRef} />
-            <TextField placeholder={'Email'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setEmail} inputRef={emailInputRef} />
-            <TextField placeholder={'Số điện thoại'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPhoneNumber} inputRef={phoneNumberInputRef} />
-            <TextField placeholder={'Mật khẩu'} isPassword={true} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPassword} inputRef={passwordInputRef} />
-            {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600', width: '100%', paddingHorizontal: 25, marginTop: 5 }}>{errorLabel}</Text>}
+                    <TextField placeholder={'Họ tên'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setName} inputRef={nameInputRef} />
+                    <TextField placeholder={'Email'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setEmail} inputRef={emailInputRef} />
+                    <TextField placeholder={'Số điện thoại'} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPhoneNumber} inputRef={phoneNumberInputRef} />
+                    <TextField placeholder={'Mật khẩu'} isPassword={true} style={[styles.textField, { marginTop: 10 }]} onChangeText={setPassword} inputRef={passwordInputRef} />
+                    {errorLabel && <Text style={{ color: '#CE0000', fontSize: 11, fontWeight: '600', width: '100%', paddingHorizontal: 25, marginTop: 5 }}>{errorLabel}</Text>}
 
-            <Text style={styles.condition}>
-                Để đăng ký tài khoản, bạn đồng ý{' '}
-                <Text style={styles.link} onPress={() => Linking.openURL('https://google.com')}>
-                    Terms & {"\n"}Conditions
-                </Text>
-                {' and '}
-                <Text style={styles.link} onPress={() => Linking.openURL('https://google.com')}>
-                    Privacy Policy
-                </Text>
-            </Text>
+                    <Text style={styles.condition}>
+                        Để đăng ký tài khoản, bạn đồng ý{' '}
+                        <Text style={styles.link} onPress={() => Linking.openURL('https://google.com')}>
+                            Terms & {"\n"}Conditions
+                        </Text>
+                        {' and '}
+                        <Text style={styles.link} onPress={() => Linking.openURL('https://google.com')}>
+                            Privacy Policy
+                        </Text>
+                    </Text>
 
-            <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng ký'} style={{marginHorizontal: 16}} onPress={handleSubmit} />
+                    <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng ký'} style={{ marginHorizontal: 16 }} onPress={handleSubmit} />
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
-                <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
-                <Text style={{ fontWeight: '500', fontSize: 12, color: COLORS.textColor, flex: 1, textAlign: 'center' }}>Hoặc</Text>
-                <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 32 }}>
-                <Pressable style={{ marginEnd: 8 }}>
-                    <Image source={require('../assets/ic_google.png')} style={{ width: 32, height: 32 }} resizeMode='contain' />
-                </Pressable>
-
-                <Pressable style={{ marginStart: 8 }}>
-                    <Image source={require('../assets/ic_facebook.png')} style={{ width: 32, height: 32 }} resizeMode='contain' />
-                </Pressable>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 32 }}>
-                <Text style={{ fontWeight: '400', fontSize: 12, color: COLORS.textColor }}>Tôi đã có tài khoản </Text>
-
-                <Pressable onTouchEnd={() => { navigation.goBack() }}>
-                    <Text style={{ fontWeight: '400', fontSize: 12, color: '#009245' }}>Đăng nhập</Text>
-                </Pressable>
-            </View>
-
-            <Modal visible={isModalVisible} animationType='fade' transparent={true}>
-                <View style={styles.modalContainer}>
-                    <Pressable style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }} onPress={() => { setModalVisible(false) }}></Pressable>
-                    <View style={styles.modalView}>
-                        <Text style={{ fontSize: 20, marginBottom: 20 }}>Đăng ký thành công!</Text>
-                        <LottieView
-                            source={require('../assets/success.json')}
-                            autoPlay
-                            loop={false}
-                            style={{ width: 100, height: 100 }}
-                            speed={1.5}
-                            resizeMode='contain'
-                        />
-                        <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} onPress={handleLoginRedirect} style={{width: 200}} />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 16 }}>
+                        <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
+                        <Text style={{ fontWeight: '500', fontSize: 12, color: COLORS.textColor, flex: 1, textAlign: 'center' }}>Hoặc</Text>
+                        <View style={{ height: 1, flex: 3, backgroundColor: '#4CAF50' }}></View>
                     </View>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 32 }}>
+                        <Pressable style={{ marginEnd: 8 }}>
+                            <Image source={require('../assets/ic_google.png')} style={{ width: 32, height: 32 }} resizeMode='contain' />
+                        </Pressable>
+
+                        <Pressable style={{ marginStart: 8 }}>
+                            <Image source={require('../assets/ic_facebook.png')} style={{ width: 32, height: 32 }} resizeMode='contain' />
+                        </Pressable>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 16, marginTop: 32 }}>
+                        <Text style={{ fontWeight: '400', fontSize: 12, color: COLORS.textColor }}>Tôi đã có tài khoản </Text>
+
+                        <Pressable onTouchEnd={() => { navigation.goBack() }}>
+                            <Text style={{ fontWeight: '400', fontSize: 12, color: '#009245' }}>Đăng nhập</Text>
+                        </Pressable>
+                    </View>
+
+                    <Modal visible={isModalVisible} animationType='fade' transparent={true}>
+                        <View style={styles.modalContainer}>
+                            <Pressable style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }} onPress={() => { setModalVisible(false) }}></Pressable>
+                            <View style={styles.modalView}>
+                                <Text style={{ fontSize: 20, marginBottom: 20 }}>Đăng ký thành công!</Text>
+                                <LottieView
+                                    source={require('../assets/success.json')}
+                                    autoPlay
+                                    loop={false}
+                                    style={{ width: 100, height: 100 }}
+                                    speed={1.5}
+                                    resizeMode='contain'
+                                />
+                                <LinearButton colors={['#007537', '#4CAF50']} title={'Đăng nhập'} onPress={handleLoginRedirect} style={{ width: 200 }} />
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
-            </Modal>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
+
+
     )
 }
 
