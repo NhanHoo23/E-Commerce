@@ -4,12 +4,15 @@ import { COLORS } from '../AppContants'
 import Header from '../components/Header'
 import DataManager from '../utils/DataManager'
 import ProductItem from '../components/ProductItem'
+import { useSelector } from 'react-redux'
 
 const ProductByCateScreen = ({ route, navigation }) => {
 
     const { category } = route.params;
-    const allProducts = DataManager.shared.getProducts().filter(product => product.category._id === category._id);
-    const plantTypes = DataManager.shared.getPlantTypes();
+    // const allProducts = DataManager.shared.getProducts().filter(product => product.category._id === category._id);
+    // const plantTypes = DataManager.shared.getPlantTypes();
+    const allProducts = useSelector(state => state.listProductStore.listProduct).filter(product => product.category._id === category._id);
+    const plantTypes = useSelector(state => state.listPlantTypeStore.listPlantType);
 
     const [displayPlantTypes, setDisplayPlantTypes] = useState([{ name: 'All' }, ...plantTypes]);
     const [selectedPlantType, setSelectedPlantType] = useState('All');
@@ -40,7 +43,7 @@ const ProductByCateScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title={category.name} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} />
+            <Header title={category.name} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} onCartPress={() => {navigation.navigate('Cart')}} />
 
             <View style={{ padding: 20, paddingTop: 0 }}>
 

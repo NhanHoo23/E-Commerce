@@ -1,13 +1,17 @@
 import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { COLORS } from '../AppContants'
 import { Pressable } from 'react-native-gesture-handler'
 import DataManager from '../utils/DataManager'
 import ProductItem from '../components/ProductItem'
+import { useSelector } from 'react-redux'
 
-const HomeScreen = ({navigation}) => {
-    const categories = DataManager.shared.getCategories();
-    const products = DataManager.shared.getProducts();
+const HomeScreen = ({ navigation }) => {
+    // const categories = DataManager.shared.getCategories();
+    // const products = DataManager.shared.getProducts();
+
+    const categories = useSelector(state => state.listCategoryStore.listCategory)
+    const products = useSelector(state => state.listProductStore.listProduct)
 
     const getProductsByCategory = (categoryId) => {
         return products.filter(product => product.category._id === categoryId).slice(0, 4);
@@ -25,12 +29,12 @@ const HomeScreen = ({navigation}) => {
                     columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
-                        <ProductItem item={item} onPress={() => navigation.navigate('ProductDetail', {product: item})}/>
+                        <ProductItem item={item} onPress={() => navigation.navigate('ProductDetail', { product: item })} />
                     )}
                 />
-                <Text 
-                style={{ fontSize: 16, color: COLORS.textColor, textDecorationLine: 'underline', textAlign: 'right' }} 
-                onPress={() => {navigation.navigate('ProductByCate', {category: category})}}>
+                <Text
+                    style={{ fontSize: 16, color: COLORS.textColor, textDecorationLine: 'underline', textAlign: 'right' }}
+                    onPress={() => { navigation.navigate('ProductByCate', { category: category }) }}>
                     Xem thêm {category.name}
                 </Text>
             </View>
@@ -43,8 +47,8 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.bannerText}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                     <Text style={{ fontSize: 24, fontWeight: '500', width: '60%' }}>Planta - toả sáng không gian nhà bạn</Text>
-                    <Pressable style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image source={require('../assets/ic_cart.png')} style={{width: 24, height: 24}}/>
+                    <Pressable onPress={() => {navigation.navigate('Cart')}} style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={require('../assets/ic_cart.png')} style={{ width: 24, height: 24 }} />
                     </Pressable>
                 </View>
                 <Pressable style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>

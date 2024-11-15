@@ -15,7 +15,7 @@ const ProductDetail = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title={product.productName} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} />
+            <Header title={product.productName} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} onCartPress={() => {navigation.navigate('Cart')}} />
 
             <View style={{ flex: 1 }}>
                 <ScrollView>
@@ -92,7 +92,6 @@ const ProductDetail = ({ route, navigation }) => {
 
                 <LinearButton colors={count > 0 ? ['#007537', '#007537'] : ['#ABABAB', '#ABABAB']} title={'Chọn mua'} onPress={null} style={{ height: 50, with: '100%', marginBottom: 15 }} />
             </View>
-
         </View>
     )
 }

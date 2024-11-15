@@ -9,10 +9,12 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { set } from 'mongoose';
 import { deleteObject, getStorage, ref } from '@react-native-firebase/storage';
+import AppManager from '../utils/AppManager';
 
 const UpdateInfo = ({ route, navigation }) => {
     const { title } = route.params;
-    const user = DataManager.shared.getCurrentUser()
+    // const user = DataManager.shared.getCurrentUser()
+    const user = AppManager.shared.getCurrentUser()
     const [currentUser, setCurrentUser] = useState(user);
     const [name, setName] = useState(user.name)
     const [email, setEmail] = useState(user.email)
@@ -167,7 +169,8 @@ const UpdateInfo = ({ route, navigation }) => {
                 const result = await res.json()
                 console.log(result.user);
                 setCurrentUser(result.user)
-                DataManager.shared.setCurrentUser(result.user)
+                // DataManager.shared.setCurrentUser(result.user)
+                AppManager.shared.setCurrentUser(result.user)
             } else {
                 setLoading(false)
                 console.log('Update user information failed')

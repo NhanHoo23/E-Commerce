@@ -2,12 +2,19 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import DataManager from '../utils/DataManager';
 import { API_URL, COLORS } from '../AppContants';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCategories } from '../redux/reducers/categoryReducer';
+import { addProducts } from '../redux/reducers/productReducer';
+import { addPlantTypes } from '../redux/reducers/plantTypeReducer';
+import { addCarts } from '../redux/reducers/cartReducer';
 
 
 const SplashScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [initialTimeout, setInitialTimeout] = useState(true);
     const [loadingText, setLoadingText] = useState('Loading...');
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -34,6 +41,7 @@ const SplashScreen = ({ navigation }) => {
                 await loadCategories()
                 await loadProducts()
                 await loadPlantTypes()
+                await loadCarts()
                 
                 navigation.replace('Login');
             } catch (error) {
@@ -58,7 +66,9 @@ const SplashScreen = ({ navigation }) => {
         try {
             const res = await fetch(`${API_URL}/categories/get-categories`);
             const categories = await res.json();
-            DataManager.shared.setCategories(categories);
+            dispatch(addCategories(categories));
+            
+            // DataManager.shared.setCategories(categories);
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
@@ -68,7 +78,9 @@ const SplashScreen = ({ navigation }) => {
         try {
             const res = await fetch(`${API_URL}/products/get-products`);
             const products = await res.json();
-            DataManager.shared.setProducts(products);
+            dispatch(addProducts(products))
+
+            // DataManager.shared.setProducts(products);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -78,9 +90,22 @@ const SplashScreen = ({ navigation }) => {
         try {
             const res = await fetch(`${API_URL}/plantTypes/get-plant-types`);
             const plantTypes = await res.json();
-            DataManager.shared.setPlantTypes(plantTypes);
+            dispatch(addPlantTypes(plantTypes))
+
+            // DataManager.shared.setPlantTypes(plantTypes);
         } catch (error) {
             console.error('Error fetching plant types:', error);
+        }
+    }
+
+    const loadCarts = async () => {
+        try {
+            const res = await fetch(`${API_URL}/carts/get-carts`);
+            const carts = await res.json();
+            dispatch(addCarts(carts))
+            // DataManager.shared.setCarts(carts);
+        } catch (error) {
+            console.error('Error fetching carts:', error);
         }
     }
 

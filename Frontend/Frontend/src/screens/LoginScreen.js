@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import LinearButton from '../components/LinearButton'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import DataManager from '../utils/DataManager'
+import AppManager from '../utils/AppManager'
 
 const LoginScreen = ({ navigation }) => {
     const [emailOrPhone, setemailOrPhone] = useState('')
@@ -54,18 +55,14 @@ const LoginScreen = ({ navigation }) => {
             })
             if (res.ok) {
                 if (rememberAcc) {
-                    await AsyncStorage.setItem('email', emailOrPhone);
-                    await AsyncStorage.setItem('password', password);
-                    await AsyncStorage.setItem('rememberAcc', 'true');
+                    AppManager.shared.saveRememberLogin(emailOrPhone, password)
                 } else {
-                    await AsyncStorage.removeItem('email');
-                    await AsyncStorage.removeItem('password');
-                    await AsyncStorage.setItem('rememberAcc', 'false');
+                    AppManager.shared.clearLoginData()
                 }
                 const user = await res.json();
                 handleMainRedirect(user)
             } else {
-                if (res.status == 404) {
+                if (res.status == 400) {
                     seterrorLabel('Invalid email or password. Try again!');
                 }
                 console.log('Register failed')
@@ -79,13 +76,10 @@ const LoginScreen = ({ navigation }) => {
 
     const loadData = async () => {
         try {
-            const savedEmail = await AsyncStorage.getItem('email');
-            const savedPassword = await AsyncStorage.getItem('password');
-            const savedRememberAcc = await AsyncStorage.getItem('rememberAcc');
-
-            if (savedRememberAcc === 'true') {
-                setemailOrPhone(savedEmail || '');
-                setPassword(savedPassword || '');
+            const loginData = await AppManager.shared.getLoginData();
+            if (loginData.rememberAcc) {
+                setemailOrPhone(loginData.emailOrPhone || '');
+                setPassword(loginData.password || '');
                 setrememberAcc(true);
             }
         } catch (error) {
@@ -96,7 +90,9 @@ const LoginScreen = ({ navigation }) => {
     const handleMainRedirect = (user) => {
         //go to main
         console.log('Successfully');
-        DataManager.shared.setCurrentUser(user)
+        // DataManager.shared.setCurrentUser(user)
+        AppManager.shared.setCurrentUser(user)
+        
         navigation.navigate('Main')
 
         setLoading(false)

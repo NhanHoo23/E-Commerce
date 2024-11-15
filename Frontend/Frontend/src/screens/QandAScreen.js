@@ -5,7 +5,7 @@ import { COLORS } from '../AppContants';
 
 const QandAScreen = ({ route, navigation }) => {
     const { title } = route.params;
-    const [expanded, setExpanded] = useState(null);  // Track the currently expanded question
+    const [expanded, setExpanded] = useState(null); 
 
     const listData = [
         {

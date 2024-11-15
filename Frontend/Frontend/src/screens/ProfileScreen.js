@@ -4,9 +4,11 @@ import { COLORS } from '../AppContants'
 import Header from '../components/Header'
 import DataManager from '../utils/DataManager'
 import { useFocusEffect } from '@react-navigation/native'
+import AppManager from '../utils/AppManager'
 
 const ProfileScreen = ({ navigation }) => {
-  const user = DataManager.shared.getCurrentUser()
+  // const user = DataManager.shared.getCurrentUser()
+  const user = AppManager.shared.getCurrentUser()
   const [avatar, setAvatar] = useState(null)
 
   useFocusEffect(
@@ -16,7 +18,8 @@ const ProfileScreen = ({ navigation }) => {
   )
 
   const updateAvatar = () => {
-    const user = DataManager.shared.getCurrentUser();
+    // const user = DataManager.shared.getCurrentUser();
+    const user = AppManager.shared.getCurrentUser();
     setAvatar(user.avatar);
 }
 
@@ -59,7 +62,8 @@ const ProfileScreen = ({ navigation }) => {
         break;
       case 'Đăng xuất':
         navigation.replace('Login');
-        DataManager.shared.setCurrentUser(null);
+        // DataManager.shared.setCurrentUser(null);
+        AppManager.shared.setCurrentUser(null);
         break;
       default:
         break;
