@@ -83,19 +83,18 @@ router.post('/add-to-cart', async (req, res) => {
     }
 })
 
-router.put('/update-cart', async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+router.put('/update-cart/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { carts } = req.body;
     try {
         const cart = await Cart.findOne({ user: userId });
-        const productIndex = cart.products.findIndex(product => product.product == productId);
-        if (productIndex >= 0) {
-            cart.products[productIndex].quantity = quantity;
-        }
+        
+        cart.products = carts
         await cart.save();
-        res.status(200).send('Cart updated');
+        res.status(200).json('Cart updated');
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json('Server Error');
     }
 })
 
