@@ -7,18 +7,20 @@ import LinearButton from '../components/LinearButton'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import DataManager from '../utils/DataManager'
 import AppManager from '../utils/AppManager'
+import { useDispatch } from 'react-redux'
+import { addCarts } from '../redux/reducers/cartReducer'
 
 const LoginScreen = ({ navigation }) => {
     const [emailOrPhone, setemailOrPhone] = useState('')
     const [password, setPassword] = useState('')
     const [rememberAcc, setrememberAcc] = useState(false)
-
     const [errorLabel, seterrorLabel] = useState('')
+    const [loading, setLoading] = useState(false);
 
     const emailInputRef = useRef(null);
     const passwordInputRef = useRef(null);
 
-    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         loadData()
@@ -87,12 +89,24 @@ const LoginScreen = ({ navigation }) => {
         }
     };
 
-    const handleMainRedirect = (user) => {
+    const loadCarts = async () => {
+        try {
+            const res = await fetch(`${API_URL}/carts/get-carts/${AppManager.shared.getCurrentUser()._id}`);
+            const carts = await res.json();
+            
+            dispatch(addCarts(carts))
+            // DataManager.shared.setCarts(carts);
+        } catch (error) {
+            console.error('Error fetching carts:', error);
+        }
+    }
+
+    const handleMainRedirect = async (user) => {
         //go to main
         console.log('Successfully');
         // DataManager.shared.setCurrentUser(user)
         AppManager.shared.setCurrentUser(user)
-        
+        await loadCarts()
         navigation.navigate('Main')
 
         setLoading(false)

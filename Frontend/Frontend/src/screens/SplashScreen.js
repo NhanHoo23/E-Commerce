@@ -41,7 +41,6 @@ const SplashScreen = ({ navigation }) => {
                 await loadCategories()
                 await loadProducts()
                 await loadPlantTypes()
-                await loadCarts()
                 
                 navigation.replace('Login');
             } catch (error) {
@@ -95,17 +94,6 @@ const SplashScreen = ({ navigation }) => {
             // DataManager.shared.setPlantTypes(plantTypes);
         } catch (error) {
             console.error('Error fetching plant types:', error);
-        }
-    }
-
-    const loadCarts = async () => {
-        try {
-            const res = await fetch(`${API_URL}/carts/get-carts`);
-            const carts = await res.json();
-            dispatch(addCarts(carts))
-            // DataManager.shared.setCarts(carts);
-        } catch (error) {
-            console.error('Error fetching carts:', error);
         }
     }
 

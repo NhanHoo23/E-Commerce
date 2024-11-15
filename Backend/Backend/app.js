@@ -9,6 +9,7 @@ var usersRouter = require('./routes/users');
 var plantTypesRouter = require('./routes/plantTypes');
 var categoriesRouter = require('./routes/categories');
 var productsRouter = require('./routes/products');
+var cartsRouter = require('./routes/carts')
 var db = require('./config/db');
 
 
@@ -29,6 +30,8 @@ app.use('/users', usersRouter);
 app.use('/plantTypes', plantTypesRouter);
 app.use('/categories', categoriesRouter);
 app.use('/products', productsRouter);
+app.use('/carts', cartsRouter);
+
 db.connectDB(); // Connect to MongoDB
 
 // catch 404 and forward to error handler

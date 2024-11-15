@@ -1,17 +1,57 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import Header from '../components/Header';
-import { COLORS } from '../AppContants';
+import { API_URL, COLORS } from '../AppContants';
 import Swiper from 'react-native-swiper';
 import LinearButton from '../components/LinearButton';
+import { useDispatch, useSelector } from 'react-redux';
+import AppManager from '../utils/AppManager';
+import { addCart, updateCart } from '../redux/reducers/cartReducer';
 
 const ProductDetail = ({ route, navigation }) => {
     const { product } = route.params;
     const [count, setcount] = useState(0)
+    const user = AppManager.shared.getCurrentUser()
+
+    const carts = useSelector(state => state.listCartStore.listCart)
+    const dispatch = useDispatch()
 
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + 'đ';
     };
+
+    const handleAddToCart = async () => {
+        if (count > 0) {            
+            try {
+                const res = await fetch(`${API_URL}/carts/add-to-cart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: user._id,
+                        productId: product._id,
+                        quantity: count,
+                    })
+                })
+
+                if (res.ok) {
+                    const result = await res.json()
+                    console.log('Add to cart successfully', result)
+                    
+                    if (carts.findIndex(cart => cart.product._id === result.product._id) !== -1) {
+                        dispatch(updateCart(result))
+                    } else {
+                        dispatch(addCart(result))
+                    }
+                } else {
+                    console.log('Add to cart failed')
+                }
+            } catch (error) {
+                console.log('Add to cart failed ', error);
+            }
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -70,7 +110,6 @@ const ProductDetail = ({ route, navigation }) => {
                         <Text style={{ fontSize: 14, fontWeight: '400', color: '#7D7B7B' }}>Đã chọn {count} sản phẩm</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-between' }}>
                             <Pressable onPress={() => {
-                                
                                 if (count > 0) { setcount(count - 1) }
                             }}>
                                 <Image source={count > 0 ? require('../assets/ic_minus_black.png') : require('../assets/ic_minus.png')} style={{ width: 24, height: 24 }} />
@@ -90,7 +129,7 @@ const ProductDetail = ({ route, navigation }) => {
                     </View>
                 </View>
 
-                <LinearButton colors={count > 0 ? ['#007537', '#007537'] : ['#ABABAB', '#ABABAB']} title={'Chọn mua'} onPress={null} style={{ height: 50, with: '100%', marginBottom: 15 }} />
+                <LinearButton colors={count > 0 ? ['#007537', '#007537'] : ['#ABABAB', '#ABABAB']} title={'Chọn mua'} onPress={() => handleAddToCart()} style={{ height: 50, with: '100%', marginBottom: 15 }} />
             </View>
         </View>
     )
