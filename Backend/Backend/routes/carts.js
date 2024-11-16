@@ -32,9 +32,10 @@ router.get('/get-carts/:userId', async (req, res) => {
 
         await carts.populate({
             path: 'products.product',
-            populate: {
-                path: 'plantType'
-            }
+            populate: [
+                { path: 'plantType' },
+                { path: 'category' }
+            ]
         });
         res.status(200).json(carts.products);
     } catch (err) {
@@ -48,30 +49,27 @@ router.post('/add-to-cart', async (req, res) => {
 
     try {
         let cart = await Cart.findOne({ user: userId });
-        let updatedQuantity;
         if (!cart) {
             cart = new Cart({
                 user: userId,
                 products: [{ product: productId, quantity }]
             });
-            updatedQuantity = quantity;
         } else {
             const productIndex = cart.products.findIndex(product => product.product == productId);
             if (productIndex >= 0) {
                 cart.products[productIndex].quantity += quantity;
-                updatedQuantity = cart.products[productIndex].quantity;
             } else {
                 cart.products.push({ product: productId, quantity });
-                updatedQuantity = quantity;
             }
         }
 
         await cart.save();
         await cart.populate({
             path: 'products.product',
-            populate: {
-                path: 'plantType'
-            }
+            populate: [
+                { path: 'plantType' },
+                { path: 'category' }
+            ]
         });
         
         const updatedProduct = cart.products.find(product => product.product && product.product._id.toString() === productId);

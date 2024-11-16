@@ -9,9 +9,7 @@ import AppManager from '../utils/AppManager'
 const ProfileScreen = ({ navigation }) => {
   // const user = DataManager.shared.getCurrentUser()
   const user = AppManager.shared.getCurrentUser()
-  const [avatar, setAvatar] = useState(null)
-
-  
+  const [updateUser, setUpdateUser] = useState(null)
 
   useFocusEffect(
     useCallback(() => {
@@ -22,13 +20,13 @@ const ProfileScreen = ({ navigation }) => {
   const updateAvatar = () => {
     // const user = DataManager.shared.getCurrentUser();
     const user = AppManager.shared.getCurrentUser();
-    setAvatar(user.avatar);
+    setUpdateUser(user)
 }
 
   const listData = [
     {
       title: 'Chung',
-      data: ['Chỉnh sửa thông tin', 'Cẩm nang trồng cây', 'Lịch sử giao dịch', 'Q & A']
+      data: ['Chỉnh sửa thông tin', 'Lịch sử giao dịch', 'Q & A']
     },
     {
       title: 'Bảo mật và Điều khoản',
@@ -46,9 +44,6 @@ const ProfileScreen = ({ navigation }) => {
     switch (item) {
       case 'Chỉnh sửa thông tin':
         navigation.navigate('UpdateInfo', { title: 'CHỈNH SỬA THÔNG TIN' });
-        break;
-      case 'Cẩm nang trồng cây':
-        Alert.alert('Bạn chọn Cẩm nang trồng cây');
         break;
       case 'Lịch sử giao dịch':
         Alert.alert('Bạn chọn Lịch sử giao dịch');
@@ -84,7 +79,7 @@ const ProfileScreen = ({ navigation }) => {
       <Header title={'PROFILE'} iconRight={null} />
 
       <View style={{ flexDirection: 'row' }}>
-        <Image source={avatar? {uri: user.avatar} : require('../assets/ic_avatar.png')} style={{ width: 40, height: 40, borderRadius: 20 }} />
+        <Image source={user.avatar ? {uri: user.avatar} : require('../assets/ic_avatar.png')} style={{ width: 40, height: 40, borderRadius: 20 }} />
         <View style={{ marginLeft: 20 }}>
           <Text style={{ color: COLORS.textColor, fontWeight: '500', fontSize: 16 }}>{user.name}</Text>
           <Text style={{ color: '#7F7F7F', fontWeight: '400', fontSize: 14 }}>{user.email}</Text>

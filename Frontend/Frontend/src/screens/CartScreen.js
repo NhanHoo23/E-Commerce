@@ -1,5 +1,5 @@
-import { FlatList, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Animated, FlatList, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { API_URL, COLORS } from '../AppContants'
 import Header from '../components/Header'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +13,41 @@ const CartScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const [selectDeleteIcon, setSelectDeleteIcon] = useState(false)
   const [selectedItemToDelete, setSelectedItemToDelete] = useState(null)
+  const slideAnim = useRef(new Animated.Value(300)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const openModal = () => {
+    setModalVisible(true);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeModal = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 300,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setModalVisible(false);
+    });
+  };
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + 'đ';
@@ -59,7 +94,7 @@ const CartScreen = ({ navigation }) => {
     } else {
       dispatch(deleteCart(selectedItemToDelete))
     }
-    setModalVisible(false)
+    closeModal()
     await updateCart(carts)
   }
 
@@ -76,7 +111,7 @@ const CartScreen = ({ navigation }) => {
         <Image source={{ uri: item.product.images[0] }} style={{ width: 80, height: 80, borderRadius: 8, marginLeft: 16 }} />
         <View style={{ flex: 2, marginLeft: 16 }}>
           <Text style={{ fontSize: 14, color: COLORS.textColor, fontWeight: '500' }}>{item.product.productName} |
-            <Text style={{ fontSize: 14, color: '#7b7b7b', fontWeight: '400' }}> {item.product.plantType.name}</Text>
+            <Text style={{ fontSize: 14, color: '#7b7b7b', fontWeight: '400' }}> {item.product.plantType ? item.product.plantType.name : item.product.category.name}</Text>
           </Text>
 
           <Text style={{ fontSize: 16, color: '#007537', fontWeight: '500', marginTop: 8 }}>{formatPrice(item.product.price)}</Text>
@@ -101,7 +136,7 @@ const CartScreen = ({ navigation }) => {
             </View>
 
             <Pressable onPress={() => {
-              setModalVisible(true)
+              openModal()
               setSelectDeleteIcon(false)
               setSelectedItemToDelete(item)
             }}>
@@ -112,7 +147,6 @@ const CartScreen = ({ navigation }) => {
       </View>
     )
   }
-
 
   return (
     <View style={styles.container}>
@@ -125,7 +159,7 @@ const CartScreen = ({ navigation }) => {
         }}
         onRightButtonPress={() => {
           if (checkItemSelected() > 0) {
-            setModalVisible(true)
+            openModal()
             setSelectDeleteIcon(true)
           }
         }}
@@ -155,26 +189,44 @@ const CartScreen = ({ navigation }) => {
       </View>
 
       <Modal
-        animationType="fade"
+        animationType="none"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          setModalVisible(false);
+          closeModal()
         }}
       >
-        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <View style={{ backgroundColor: 'white', width: '90%', padding: 16, borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+        <Animated.View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            opacity: fadeAnim,
+          }}
+        >
+          <Animated.View
+            style={{
+              transform: [{ translateY: slideAnim }],
+              backgroundColor: 'white',
+              width: '90%',
+              padding: 16,
+              borderRadius: 8,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 20,
+            }}
+          >
             <Text style={{ fontSize: 16, fontWeight: '500', color: COLORS.textColor }}>Xác nhận xóa đơn hàng?</Text>
             <Text style={{ fontSize: 14, fontWeight: '400', color: '#7D7B7B', marginTop: 8 }}>Thao tác này sẽ không thể khôi phục</Text>
 
             <LinearButton colors={['#007537', '#007537']} title={'Đồng ý'} onPress={() => deleteItem()} style={{ height: 50, with: '100%', marginBottom: 15 }} />
 
-            <Pressable onPress={() => setModalVisible(false)}>
+            <Pressable onPress={() => closeModal()}>
               <Text style={{ fontSize: 16, fontWeight: '500', color: COLORS.textColor, textDecorationLine: 'underline' }}>Hủy bỏ</Text>
             </Pressable>
-          </View>
-        </View>
-
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </View>
   )
