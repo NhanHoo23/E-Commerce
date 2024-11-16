@@ -55,7 +55,7 @@ const ProductDetail = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header title={product.productName} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} onCartPress={() => {navigation.navigate('Cart')}} />
+            <Header title={product.productName} iconRight={require('../assets/ic_cart.png')} onBackPress={() => { navigation.goBack() }} onRightButtonPress={() => {navigation.navigate('Cart')}} />
 
             <View style={{ flex: 1 }}>
                 <ScrollView>

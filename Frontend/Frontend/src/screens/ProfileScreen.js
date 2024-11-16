@@ -11,6 +11,8 @@ const ProfileScreen = ({ navigation }) => {
   const user = AppManager.shared.getCurrentUser()
   const [avatar, setAvatar] = useState(null)
 
+  
+
   useFocusEffect(
     useCallback(() => {
       updateAvatar()
