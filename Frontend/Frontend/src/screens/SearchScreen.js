@@ -1,14 +1,32 @@
 import { FlatList, Image, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { COLORS } from '../AppContants'
 import Header from '../components/Header'
 import AppManager from '../utils/AppManager'
 import { useSelector } from 'react-redux'
+import { useFocusEffect } from '@react-navigation/native'
 
 const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('')
-  const [searchHistory, setSearchHistory] = useState(AppManager.shared.getSearchHistory());
+  const [searchHistory, setSearchHistory] = useState([]);
   const products = useSelector(state => state.listProductStore.listProduct)
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSearchHistory = async () => {
+        const history = await AppManager.shared.getSearchHistory(); 
+        console.log(history); 
+        setSearchHistory(history);
+      };
+
+      fetchSearchHistory();
+      
+
+      return () => {
+        setSearchText('');
+      };
+    }, [])
+  );
 
   const handleSearchSubmit = async () => {
     try {
