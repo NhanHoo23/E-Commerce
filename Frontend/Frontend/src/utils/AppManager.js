@@ -35,7 +35,7 @@ class AppManager {
             const savedEmail = await AsyncStorage.getItem('emailOrPhone');
             const savedPassword = await AsyncStorage.getItem('password');
             const savedRememberAcc = await AsyncStorage.getItem('rememberAcc') === 'true';
-            
+
             return {
                 emailOrPhone: savedEmail || '',
                 password: savedPassword || '',
@@ -58,6 +58,27 @@ class AppManager {
             await AsyncStorage.setItem('rememberAcc', 'false');
         } catch (error) {
             console.log('Lỗi: ', error);
+        }
+    }
+
+    async saveSearchHistory(searchHistory) {
+        try {
+            await AsyncStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        } catch (error) {
+            console.log('Lỗi: ', error);
+        }
+    }
+
+    async getSearchHistory() {
+        try {
+            const history = await AsyncStorage.getItem('searchHistory');
+            if (history !== null) {
+                return JSON.parse(history);
+            }
+            return [];
+        } catch (error) {
+            console.log('Lỗi: ', error);
+            return [];
         }
     }
 }
